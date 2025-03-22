@@ -13,11 +13,21 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
 
-// Create a red sphere (ball)
-const geometry = new THREE.SphereGeometry(1, 32, 32);
-const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-const sphere = new THREE.Mesh(geometry, material);
-scene.add(sphere);
+// Create a blue cube
+const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+const material = new THREE.MeshStandardMaterial({ 
+  color: 0x0000ff,
+  wireframe: false
+});
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+// Add wireframe
+const wireframe = new THREE.LineSegments(
+  new THREE.EdgesGeometry(geometry),
+  new THREE.LineBasicMaterial({ color: 0xffffff })
+);
+cube.add(wireframe);
 
 // Add lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -42,9 +52,9 @@ window.addEventListener('resize', () => {
 function animate() {
   requestAnimationFrame(animate);
   
-  // Rotate the sphere
-  sphere.rotation.x += 0.01;
-  sphere.rotation.y += 0.01;
+  // Rotate the cube
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
   
   renderer.render(scene, camera);
 }
