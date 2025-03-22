@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createHexGrid } from './map.js';
+import { Player } from './player.js';  // Import our new Player class
 
 // Initialize the scene
 const scene = new THREE.Scene();
@@ -26,7 +27,7 @@ controls.minDistance = 5;
 controls.maxDistance = 15;
 controls.maxPolarAngle = Math.PI / 2.5; // Limit to prevent going below the grid
 
-// Create the hex grid (12x12)
+// Create the hex grid (14x14)
 const hexGrid = createHexGrid(14, 14);
 scene.add(hexGrid);
 
@@ -51,6 +52,40 @@ directionalLight.position.set(5, 10, 5);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
+// Create player at grid position (0, 0)
+const player = new Player(scene, 0.66, 0.15, 0.5); // Pass hexSize = 0.5
+
+// Set up keyboard controls
+const keyStates = {};
+
+window.addEventListener('keydown', (e) => {
+  keyStates[e.code] = true;
+  
+  // Handle movement keys
+  switch(e.code) {
+    case 'ArrowUp':
+    case 'KeyW':
+      player.move('up');
+      break;
+    case 'ArrowDown':
+    case 'KeyS':
+      player.move('down');
+      break;
+    case 'ArrowLeft':
+    case 'KeyA':
+      player.move('left');
+      break;
+    case 'ArrowRight':
+    case 'KeyD':
+      player.move('right');
+      break;
+  }
+});
+
+window.addEventListener('keyup', (e) => {
+  keyStates[e.code] = false;
+});
+
 // Handle window resize
 window.addEventListener('resize', () => {
   const width = window.innerWidth;
@@ -68,6 +103,9 @@ function animate() {
   
   // Update controls
   controls.update();
+  
+  // Update player animation
+  player.update();
   
   renderer.render(scene, camera);
 }
